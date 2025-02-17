@@ -1,0 +1,252 @@
+---
+title: "behavioural analyses"
+author: "Nazia Jassim"
+output: html_document
+date: "2024-07-17"
+---
+
+## Author: Nazia Jassim (nj304@cam.ac.uk)
+
+## Scripts for main behavioural analyses of probabilistic serial reaction time task data
+
+## Prepare serial reaction time (srt) task data for analysis
+```{r}
+library("tidyverse");
+library("tidyr")
+library("dplyr")
+library("naniar")
+library("ggpubr")
+
+
+demo <- read.csv("demographics_srt.csv") %>% mutate(Trait_Anxiety = case_when(STAI_T>47 ~ "High", STAI_T<=47 ~ "Low")) # read demographics + questionnaire scores, group into High and Low anxiety groups based on stai scores
+
+read_csv("SRT_data_all.csv") %>%  # read srt data
+  as_tibble %>%
+  filter(Block != 99) %>%  # remove practice trials
+  replace_with_na(replace = list(RT=999.000, Response= 999)) %>% # replace missed responses with NA
+  mutate(post_reversal= as.factor(Session), 
+         Result = case_when(Response== NumC ~ "Correct", Response != NumC ~ "Wrong"),
+         NumA = as.factor(NumA), NumB= as.factor(NumB), NumC= as.factor(NumC),
+         RT = RT*1000) %>%
+  rename("Stimt-2" = NumA, "Stimt-1" = NumB, "Stimt"= NumC) %>%
+  group_by(SID,Session) %>%
+  mutate(Trial_Number = row_number()) -> data;
+
+##-- In Baseline, Seq A is more probable and B less probable, vice versa after the reversal
+
+data %>% filter(Session == 1) %>% mutate(Sequence = case_when(Sequence =="A" ~ "High Prob", Sequence == "B" ~ "Low Prob")) -> srt_baseline;
+
+data %>% filter(Session == 2) %>% mutate(Sequence = case_when(Sequence =="B" ~ "High Prob", Sequence == "A" ~ "Low Prob")) -> srt_reversal;
+
+rbind(srt_baseline, srt_reversal) -> srt
+```
+
+
+## prepare data for modelling
+
+```{r}
+
+srt %>% 
+    mutate(Correct= case_when(Result == "Correct"~ 1, Result == "Wrong"  ~ 0), 
+           RT = case_when(RT<200 ~ NaN, RT ==NA ~ NaN, RT>200 ~ RT )) %>%  ## recode outliers as missing for model to ignore
+  group_by(SID, Sequence, Result, Session) %>%  
+  mutate(cutoff = mean(RT, na.rm=TRUE)+ 2*sd(RT, na.rm=TRUE), 
+         RT = case_when(RT>cutoff ~ NaN, RT<cutoff ~ RT)) %>% 
+  group_by(SID, Session, Sequence, Result) %>%
+     mutate(log_RT = log(RT),                       # log and inverse transformation
+            inverse_RT = 1/RT) %>% dplyr::select(-cutoff)-> data_for_hgf_clean;
+
+data_for_hgf_clean %>% group_by(SID) %>% mutate(post_error= 
+                                as.factor(case_when(
+                                        lag(Correct == 0) ~ 1,    # code trials following an error as 1       
+                                        lag(Correct ==1) ~ 0)))-> data_for_hgf_clean;
+
+write.csv(data_for_hgf_clean, "all_participants_data_for_hgf_clean.csv") # save for modelling 
+```
+
+## Prep data for model-free analyses. remove outliers, rename variables
+
+```{r}
+data_for_hgf_clean %>% 
+  mutate(Session = as.factor(Session), post_error = as.factor(post_error), Block= as.factor(Block), 
+         Stages = case_when(Trial_Number==1:320 ~ "Early", Trial_Number== 321:640 ~ "Middle", Trial_Number==641:960 ~ "Late")) %>% na.omit() -> srt_data
+
+```
+
+# LME models - sequence and post-error
+
+```{r}
+library(lmerTest)
+
+model1 <- lmer(log_RT ~ Sequence+ Session+ (1| SID), data=srt_data);
+summary(model1)
+
+ 
+model2 <-lmer(log_RT ~ (Sequence+ Session) * Stages+ (1| SID), data=srt_data);
+summary(model2)
+
+model3 <- lmer(log_RT ~  Session * post_error+ (1 | SID), data=srt_data);
+summary(model3)
+```
+
+
+## Plots for manuscript
+```{r}
+library(ggdist)
+library(ggrain)
+
+colors1 <- c("#33767b","#d66d50")
+colors2 <- c("#97E3D6","#FDBAAA")
+colors3 <- c("#C79804", "#192A3C")
+colors4 <- c("#192A3C", "#96C5BD", "#56DDD2" )
+
+srt_data %>% mutate(bins = case_when(Block ==1 ~ 120, Block == 2 ~ 240, Block == 3 ~ 360, Block == 4 ~ 480, Block == 5 ~ 600, Block == 6 ~ 720, Block == 7 ~ 840, Block == 8 ~ 960),
+                    Session = case_when(Session== 1 ~ "Pre-reversal", Session == 2 ~ "Post-reversal"),
+                    Session = as.factor(Session),
+                    Trial = case_when(post_error== 1 ~ "Post-error", post_error==0 ~ "Post-correct"),
+                    Probability = as.factor(case_when(Sequence == "High Prob" ~ "High", Sequence == "Low Prob" ~ "Low")))-> srt_data_plot
+
+
+srt_data_plot$Session_temp= factor(srt_data_plot$Session, levels = c("Pre-reversal", "Post-reversal")) # have to do this because facet would display the post-reversal first!
+
+srt_data_plot$Stages_temp = factor(srt_data_plot$Stages, levels = c("Early", "Middle", "Late"))
+
+# Stim probablity x time 
+seq_plot <- srt_data_plot %>% filter(Result == "Correct") %>% ggplot(aes(x= bins, y= log(RT), group= Probability, color= Probability, fill=Probability)) + 
+     stat_summary( geom="pointrange", size=0.8) +  stat_summary(geom="line", size=1)+
+     stat_summary(geom = "ribbon", fun.data = mean_cl_normal, alpha = 0.1) +  xlab("Trial Number") + ylab("log RT")+
+     facet_wrap(~Session_temp) +
+     scale_x_continuous(breaks= c(120, 240, 360, 480, 600, 720, 840, 960)) + 
+     scale_fill_manual(values= colors1) + scale_color_manual(values= colors1) + theme_minimal(base_size = 16)   
+     #guides(fill=guide_legend(title="Stimulus probability"), color =guide_legend(title= "Stimulus probability"))
+
+ggsave("seqplotl.png", width=8, height=4)
+
+
+seq_plot_stage <- srt_data_plot %>% filter(Result == "Correct") %>% ggplot(aes(x= Stages_temp, y= log(RT), group= Probability, color= Probability, fill=Probability)) + 
+     stat_summary( geom="pointrange", size=0.8) +  stat_summary(geom="line", size=1)+
+     stat_summary(geom = "ribbon", fun.data = mean_cl_normal, alpha = 0.1) +  xlab("Stage") + ylab("log RT")+
+     facet_wrap(~Session_temp) +
+     scale_fill_manual(values= colors1) + scale_color_manual(values= colors1) + theme_minimal(base_size = 16)   
+     #guides(fill=guide_legend(title="Stimulus probability"), color =guide_legend(title= "Stimulus probability"))
+
+seq_plot2 <- srt_data_plot %>% filter(Result == "Correct") %>% 
+  ggplot(aes(x= Session_temp, y= log_RT, color=Probability, fill=Probability)) +
+    geom_rain(alpha = .4, rain.side = 'f2x2', id.long.var = "SID",
+                violin.args = list(color = NA, alpha = .7)) +
+  scale_fill_manual(values= colors1) + scale_color_manual(values= colors1) + theme_minimal(base_size = 16) + xlab("Session") + ylab("log RT")
+
+ggsave("seqplot2.png", width=6, height=3)
+
+
+peplot1 <- ggplot(srt_data_plot , aes(Session_temp, RT, color=Trial, fill= Trial)) + 
+    ggdist::stat_halfeye(adjust = .5, width = .3, justification = -.7, alpha= 0.2) + 
+    geom_boxplot(width = .2, outlier.shape = NA, linetype=1, alpha= 0.8 ) +
+    gghalves::geom_half_point(side ="l", range_scale = .3, alpha = 0.1) +  scale_fill_manual(values= colors1) + scale_color_manual(values= colors1) + theme_minimal(base_size = 16) + xlab("Session") + ylab("RT") + guides(fill=guide_legend(title="Trial type"), color =guide_legend(title= "Trial type"))
+
+#ggsave("peplotl.png", width=6, height=3)
+
+pe_plot2 <- srt_data_plot %>% 
+  ggplot(aes(x= bins, y= log(RT), group= Trial, color= Trial, fill=Trial)) + 
+     stat_summary( geom="pointrange", size=0.8) +  stat_summary(geom="line", size=1)+
+     stat_summary(geom = "ribbon", fun.data = mean_cl_normal, alpha = 0.1) +  xlab("Trial Number") + ylab("log RT")+
+     facet_wrap(~Session_temp) +
+     scale_x_continuous(breaks= c(120, 240, 360, 480, 600, 720, 840, 960)) + 
+     scale_fill_manual(values= colors4) + scale_color_manual(values= colors4) + theme_minimal(base_size = 16)   
+
+ggsave("peplot2.png", width=8, height=4)
+
+pe_plot3 <- srt_data_plot %>% 
+    ggplot(aes(x= Session_temp, y= log_RT, color=Trial, fill=Trial)) +
+    geom_rain(alpha = .2, rain.side = 'f2x2', id.long.var = "SID",
+              violin.args = list(color = NA, alpha = .7)) +
+    scale_fill_manual(values= colors4) + scale_color_manual(values= colors4) + theme_minimal(base_size = 16) + xlab("Session") + ylab("log RT")
+ggsave("peplot2.png", width=6, height=3)
+
+```
+
+
+
+```{r}
+
+## Compute averages 
+
+# avgs for each participant,( not taking into account any task variables)
+srt_data_plot %>% #filter(Result=="Correct") %>%
+    group_by(SID) %>% 
+  summarise(mean_logRT = mean(log_RT, na.rm=TRUE), median_logRT = median(log_RT, na.rm=TRUE), 
+            mean_RT = mean(RT, na.rm=TRUE), median_RT = median(RT, na.rm=TRUE), accuracy_rate= sum(Correct)/n()) %>%  mutate(across(where(is.numeric), ~round(., 2))) ->srt_data_avg_sid
+
+# accuracy per session
+srt_data_plot %>%
+    group_by(SID, Session_temp) %>% 
+  summarise(mean_logRT = mean(log_RT, na.rm=TRUE), median_logRT = median(log_RT,na.rm=TRUE), 
+            mean_RT = mean(RT, na.rm=TRUE), median_RT = median(RT, na.rm=TRUE), 
+            accuracy_rate= sum(Correct)/n()) %>%  mutate(across(where(is.numeric), ~round(., 2))) -> srt_data_avg_sess
+
+
+# quick t test to compare accuracy accross sessions 
+srt_data_avg_sess %>% filter(Session_temp=="Pre-reversal") -> acc_s1
+srt_data_avg_sess %>% filter(Session_temp=="Post-reversal") -> acc_s2
+
+
+t.test(acc_s1$accuracy_rate, acc_s2$accuracy_rate)
+
+   merge(demo, srt_data_avg_sid, by ="SID") %>% ggplot( aes(x= mean_logRT, y=STAI_T)) + 
+    geom_point(size=2, shape=18 , alpha= 0.7)+
+    geom_smooth(method="lm") +stat_cor(method = "pearson") 
+
+
+# compute avgs based on session only 
+
+srt_data_plot %>% filter(Result == "Correct") %>%
+    group_by(SID, Session_temp) %>% 
+  summarise(mean_logRT = mean(log_RT), median_logRT = median(log_RT), 
+            mean_RT = mean(RT), median_RT = median(RT)) %>%  mutate(across(where(is.numeric), ~round(., 2))) -> srt_data_avg_sess
+
+
+# compute avgs based on factors session, post_error
+srt_data_plot %>%
+    group_by(SID, Session_temp, Trial) %>% 
+  summarise(mean_logRT = mean(log_RT), median_logRT = median(log_RT), 
+            mean_RT = mean(RT), median_RT = median(RT)) -> srt_data_avg_pe
+
+
+# based on post error only
+srt_data_plot %>%
+    group_by(SID, Trial) %>% 
+  summarise(mean_logRT = mean(log_RT), median_logRT = median(log_RT), 
+            mean_RT = mean(RT), median_RT = median(RT)) -> srt_data_avg_pe_overall
+
+
+# compute avgs baased on session and sequence
+srt_data_plot %>% group_by(SID, Session_temp, Sequence) %>% filter(Result== "Correct") %>%
+  summarise(mean_logRT = mean(log_RT), median_logRT = median(log_RT), 
+            mean_RT = mean(RT), median_RT = median(RT), 
+            accuracy_rate= sum(Correct)/n()) %>%  mutate(across(where(is.numeric), ~round(., 2))) -> srt_data_avg_seq
+
+```
+
+
+# Relationship with STAI
+```{r}
+
+merge(srt_data, demo, by = "SID") %>% mutate(Session = case_when(Session== 1 ~ "Pre-reversal", Session == 2 ~ "Post-reversal"))-> srt_data_q
+
+stai_full_model <- lmer(log_RT ~ STAI_T* Session + STAI_S  + (1 | SID), data = srt_data_q)
+summary(stai_full_model)
+
+
+srt_data_q$Session_temp= factor(srt_data_q$Session, levels = c("Pre-reversal", "Post-reversal"))
+
+## Plot based on high and low anxiety groups - for visualisation only 
+srt_data_q %>% 
+    ggplot(aes(x= Session_temp, y= log_RT, color=Trait_Anxiety, fill=Trait_Anxiety)) +
+    geom_rain(alpha = .4, rain.side = 'f2x2', id.long.var = "SID",
+              violin.args = list(color = NA, alpha = .7)) +
+    scale_fill_manual(values= colors1) + scale_color_manual(values= colors1) + theme_minimal(base_size = 16) + xlab("Session") + ylab("log RT")
+
+```
+
+
+
