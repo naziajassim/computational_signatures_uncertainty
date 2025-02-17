@@ -3,8 +3,5 @@ This repository contains analysis scripts for the project "Neurochemical markers
 
 Details can be found in the following preprint:
 
-
-
-Addioionalata associated with preprint and current repository can be found here: 10.6084/m9.figshare.28430543
-
-
+Data associated with the repository can be found here:
+> Jassim, Nazia; Waade, Peter Thestrup; Parsons, Owen; Petzschner, Frederike H.; Rua, Catarina; Rodgers, Christopher T.; et al. (2025). Neurochemical markers of uncertainty processing in humans. figshare. Dataset. [https://doi.org/10.6084/m9.figshare.28430543](https://doi.org/10.6084/m9.figshare.28430543)
