@@ -1,5 +1,5 @@
 # neurochem_markers_uncertainty
-This repository contains analysis scripts for the project "Neurochemical markers of uncertainty processing in humans"
+This repository contains Rmd analysis scripts for the project **"Neurochemical markers of uncertainty processing in humans"**
 
 Details can be found in the following preprint:
 
