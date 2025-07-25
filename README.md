@@ -46,3 +46,21 @@ The workflow includes:
 * Summary metrics: Computing mean and median reaction times, log reaction times, and accuracy per participant, per session, and by trial type.
 
 R packages required: tidyverse, naniar, ggpubr, lmerTest, ggdist, ggrain, gghalves
+
+**Post hoc analyses on HGF modelling output**
+
+_Script name: hgf_posthoc_analyses.Rmd_
+
+_Purpose: Conducts post hoc analyses on Hierarchical Gaussian Filter (HGF) modeling outputs to examine relationships between model-derived uncertainty parameters, neurochemical markers from MRS, and questionnaire data._
+
+The workflow includes:
+
+* Data import: Loading HGF model output CSV files (hgf_posteriors_all_participants.csv, hgf_results_all.csv), behavioral histories, demographics (demographics_srt.csv), and MRS glutamate+glutamine (Glx) data (glx_motor.csv).
+
+* Data processing: Filtering and renaming regression beta parameters reflecting unexpected uncertainty, expected uncertainty, post-error slowing, and post-reversal effects for each participant.
+
+* Visualization: Generating summary plots of parameter estimates with confidence intervals, ranking participants by effect sizes.
+
+* Statistical analyses: Correlating post-reversal beta parameters with trait anxiety (STAI-Trait) scores, examining associations between HGF parameters and motor cortex Glx levels.
+
+* Additional exploratory analyses: Visualization of regression noise parameter relationships with questionnaire measures.
