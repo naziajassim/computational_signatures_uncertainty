@@ -55,7 +55,7 @@ _Purpose: Conducts post hoc analyses on Hierarchical Gaussian Filter (HGF) model
 
 The workflow includes:
 
-* Data import: Loading HGF model output CSV files (hgf_posteriors_all_participants.csv, hgf_results_all.csv), behavioral histories, demographics (demographics_srt.csv), and MRS glutamate+glutamine (Glx) data (glx_motor.csv).
+* Data import: Loading HGF model output CSV files (hgf_posteriors_all_participants.csv, hgf_results_all.csv), behavioural histories, demographics (demographics_srt.csv), and MRS glutamate+glutamine (Glx) data (glx_motor.csv).
 
 * Data processing: Filtering and renaming regression beta parameters reflecting unexpected uncertainty, expected uncertainty, post-error slowing, and post-reversal effects for each participant.
 
