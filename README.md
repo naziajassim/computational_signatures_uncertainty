@@ -6,9 +6,9 @@ Details can be found in the following preprint:
 Nazia Jassim, Peter Thestrup Waade, Owen Parsons, Frederike H Petzschner, Caterina Rua, Christopher T Rodgers, Simon Baron-Cohen, John Suckling, Christoph Mathys, Rebecca P Lawson. bioRxiv 2025.02.19.639013; doi: [https://doi.org/10.1101/2025.02.19.639013](https://doi.org/10.1101/2025.02.19.639013)
 
 
-**Probabilistic Serial Reaction Time Task (SRT) MATLAB Script**
+**1. Probabilistic Serial Reaction Time Task (SRT) MATLAB Script**
 
-_Script Name: serialReactionTimeTask.m_.
+_Script Name: serialReactionTimeTask.m_. Located in SRT_task folder.
 
 _Purpose: Implements the probabilistic Serial Reaction Time (SRT) task with pre-generated sequences, using Psychtoolbox for stimulus presentation and response collection._
 
@@ -25,7 +25,7 @@ Feedback: Beep sound on incorrect or delayed responses.
 
 Requirements:  MATLAB (R2017+ recommended), Psychtoolbox-3 (added to MATLAB path), Audio enabled for feedback beeps
 
-**Behavioural data RmD analysis script**
+**2. Behavioural data RmD analysis script**
 
 _Script name: behavioural_analyses_srt.Rmd_
 
@@ -47,7 +47,7 @@ The workflow includes:
 
 R packages required: tidyverse, naniar, ggpubr, lmerTest, ggdist, ggrain, gghalves
 
-**Post hoc analyses on HGF modelling output**
+**3. Post hoc analyses on HGF modelling output**
 
 _Script name: hgf_posthoc_analyses.Rmd_
 
