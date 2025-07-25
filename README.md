@@ -31,7 +31,7 @@ Audio enabled for feedback beeps
 Files required in the same folder:
 session1_seq_generation.csv (fixed sequence file)
 
-** Behavioural data RmD analysis script **
+**Behavioural data RmD analysis script**
 This script performs data preparation, cleaning, modeling, and visualization for behavioural data from a probabilistic serial reaction time (SRT) task. The workflow includes:
 
 Data import and preprocessing – Loading demographics and SRT task data, filtering practice trials, and handling missing or outlier responses.
