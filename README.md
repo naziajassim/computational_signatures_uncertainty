@@ -8,8 +8,8 @@ Nazia Jassim, Peter Thestrup Waade, Owen Parsons, Frederike H Petzschner, Cateri
 
 **Probabilistic Serial Reaction Time Task (SRT) MATLAB Script**
 
-Script Name: serialReactionTimeTask.m
-Purpose: Implements the probabilistic Serial Reaction Time (SRT) task with pre-generated sequences, using Psychtoolbox for stimulus presentation and response collection.
+_Script Name: serialReactionTimeTask.m_
+_Purpose: Implements the probabilistic Serial Reaction Time (SRT) task with pre-generated sequences, using Psychtoolbox for stimulus presentation and response collection._
 
 * Overview: This script runs Session 1 of a probabilistic SRT task.Participants respond to visual cues ("X" appearing in one of four boxes) by pressing the corresponding key (z, x, n, m). The trial order is initially randomized within blocks but follows a fixed probabilistic sequence (Kaufmann et al., 2010). Session 2 (reversal learning) must be run using the separate Session 2 script.
 
@@ -22,15 +22,14 @@ Feedback: Beep sound on incorrect or delayed responses.
 
 * Practice trials: Includes a short training demo before the main task.
 
-Requirements
-MATLAB (R2017+ recommended)
-Psychtoolbox-3 (added to MATLAB path)
-Audio enabled for feedback beeps
+Requirements:  MATLAB (R2017+ recommended), Psychtoolbox-3 (added to MATLAB path), Audio enabled for feedback beeps
 
 **Behavioural data RmD analysis script**
 
-Script name:behavioural_analyses_srt.Rmd
-Purpose: Performs data preparation, cleaning, modeling, and visualization for behavioural data from a probabilistic serial reaction time (SRT) task. The workflow includes:
+_Script name: behavioural_analyses_srt.Rmd_
+_Purpose: Performs data preparation, cleaning, modeling, and visualization for behavioural data from a probabilistic serial reaction time (SRT) task._ 
+
+The workflow includes:
 
 * Data import and preprocessing – Loading demographics and SRT task data, filtering practice trials, and handling missing or outlier responses.
 
@@ -44,6 +43,4 @@ Purpose: Performs data preparation, cleaning, modeling, and visualization for be
 
 * Summary metrics – Computing mean and median reaction times, log reaction times, and accuracy per participant, per session, and by trial type.
 
-Dependencies
-The analysis requires the following R packages:
-tidyverse, naniar, ggpubr, lmerTest, ggdist, ggrain, gghalves.
+R packages required: tidyverse, naniar, ggpubr, lmerTest, ggdist, ggrain, gghalves
