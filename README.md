@@ -33,16 +33,16 @@ _Purpose: Performs data preparation, cleaning, modeling, and visualization for b
 
 The workflow includes:
 
-* Data import and preprocessing – Loading demographics and SRT task data, filtering practice trials, and handling missing or outlier responses.
+* Data import and preprocessing: Loading demographics and SRT task data, filtering practice trials, and handling missing or outlier responses.
 
-* Data preparation for modeling – Creating log-transformed reaction times, coding post-error trials, and saving a clean dataset for hierarchical Gaussian filter (HGF) modeling.
+* Data preparation for modeling: Creating log-transformed reaction times, coding post-error trials, and saving a clean dataset for hierarchical Gaussian filter (HGF) modeling.
 
-* Model-free analyses – Generating summary statistics, accuracy rates, and performing t-tests across sessions.
+* Model-free analyses: Generating summary statistics, accuracy rates, and performing t-tests across sessions.
 
-* Linear mixed-effects models (LME) – Assessing effects of stimulus sequence, session (pre- vs. post-reversal), trial stages (early, middle, late), and post-error effects on reaction times.
+* Linear mixed-effects models (LME):  Assessing effects of stimulus sequence, session (pre- vs. post-reversal), trial stages (early, middle, late), and post-error effects on reaction times.
 
-* Visualization – Creating publication-quality plots of sequence effects, stage effects, and post-error dynamics using ggplot2 and related libraries.
+* Visualization: Creating publication-quality plots of sequence effects, stage effects, and post-error dynamics using ggplot2 and related libraries.
 
-* Summary metrics – Computing mean and median reaction times, log reaction times, and accuracy per participant, per session, and by trial type.
+* Summary metrics: Computing mean and median reaction times, log reaction times, and accuracy per participant, per session, and by trial type.
 
 R packages required: tidyverse, naniar, ggpubr, lmerTest, ggdist, ggrain, gghalves
