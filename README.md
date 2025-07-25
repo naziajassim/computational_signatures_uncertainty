@@ -8,7 +8,8 @@ Nazia Jassim, Peter Thestrup Waade, Owen Parsons, Frederike H Petzschner, Cateri
 
 **Probabilistic Serial Reaction Time Task (SRT) MATLAB Script**
 
-_Script Name: serialReactionTimeTask.m_
+_Script Name: serialReactionTimeTask.m_.
+
 _Purpose: Implements the probabilistic Serial Reaction Time (SRT) task with pre-generated sequences, using Psychtoolbox for stimulus presentation and response collection._
 
 * Overview: This script runs Session 1 of a probabilistic SRT task.Participants respond to visual cues ("X" appearing in one of four boxes) by pressing the corresponding key (z, x, n, m). The trial order is initially randomized within blocks but follows a fixed probabilistic sequence (Kaufmann et al., 2010). Session 2 (reversal learning) must be run using the separate Session 2 script.
@@ -27,6 +28,7 @@ Requirements:  MATLAB (R2017+ recommended), Psychtoolbox-3 (added to MATLAB path
 **Behavioural data RmD analysis script**
 
 _Script name: behavioural_analyses_srt.Rmd_
+
 _Purpose: Performs data preparation, cleaning, modeling, and visualization for behavioural data from a probabilistic serial reaction time (SRT) task._ 
 
 The workflow includes:
