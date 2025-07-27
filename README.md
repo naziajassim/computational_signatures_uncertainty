@@ -27,7 +27,7 @@ Requirements:  MATLAB (R2017+ recommended), Psychtoolbox-3 (added to MATLAB path
 
 **2. Behavioural data RmD analysis script**
 
-_Script name: behavioural_analyses_srt.Rmd_
+_Script name: behavioural_analyses_srt_v2.Rmd_
 
 _Purpose: Performs data preparation, cleaning, modeling, and visualization for behavioural data from a probabilistic serial reaction time (SRT) task._ 
 
@@ -39,9 +39,9 @@ The workflow includes:
 
 * Model-free analyses: Generating summary statistics, accuracy rates, and performing t-tests across sessions.
 
-* Linear mixed-effects models (LME):  Assessing effects of stimulus sequence, session (pre- vs. post-reversal), trial stages (early, middle, late), and post-error effects on reaction times.
+* Linear mixed-effects models (LME):  Assessing effects of stimulus sequence, session (pre- vs. post-reversal), trial number, and post-error effects on reaction times.
 
-* Visualization: Creating publication-quality plots of sequence effects, stage effects, and post-error dynamics using ggplot2 and related libraries.
+* Visualization: Creating plots of sequence effects, temporal effects, and post-error dynamics using ggplot2 and related libraries.
 
 * Summary metrics: Computing mean and median reaction times, log reaction times, and accuracy per participant, per session, and by trial type.
 
@@ -49,7 +49,7 @@ R packages required: tidyverse, naniar, ggpubr, lmerTest, ggdist, ggrain, gghalv
 
 **3. Post hoc analyses on HGF modelling output**
 
-_Script name: hgf_posthoc_analyses.Rmd_
+_Script name: hgf_posthoc_analyses_v2.Rmd_
 
 _Purpose: Conducts post hoc analyses on Hierarchical Gaussian Filter (HGF) modeling outputs to examine relationships between model-derived uncertainty parameters, neurochemical markers from MRS, and questionnaire data._
 
@@ -63,4 +63,4 @@ The workflow includes:
 
 * Statistical analyses: Correlating post-reversal beta parameters with trait anxiety (STAI-Trait) scores, examining associations between HGF parameters and motor cortex Glx levels.
 
-* Additional exploratory analyses: Visualization of regression noise parameter relationships with questionnaire measures.
+* Additional exploratory analyses: Evolution of surprise over time, parameter recovery correlation checks. 
