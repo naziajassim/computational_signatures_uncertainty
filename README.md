@@ -1,4 +1,4 @@
-# Neurochemical markers of uncertainty processing in humans
+# Computational signatures of uncertainty are reflected in motor cortex excitatory neurochemistry
 This repository contains Rmd analysis scripts for the project **"Neurochemical markers of uncertainty processing in humans"** and Matlab Psychtoolbox scripts for implementation of the probabilistic serial reaction time task (SRT). 
 
 Details can be found in the following preprint:
