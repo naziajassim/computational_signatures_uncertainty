@@ -51,7 +51,7 @@ R packages required: tidyverse, naniar, ggpubr, lmerTest, ggdist, ggrain, gghalv
 
 _Script name: hgf_posthoc_analyses_v2.Rmd_
 
-_Purpose: Conducts post hoc analyses on Hierarchical Gaussian Filter (HGF) modeling outputs to examine relationships between model-derived uncertainty parameters, neurochemical markers from MRS, and questionnaire data._
+_Purpose: Conducts post hoc analyses on Hierarchical Gaussian Filter (HGF) modeling outputs to examine relationships between model-derived uncertainty parameters, neurochemical markers from MRS, and questionnaire data. Please refer the associated [modeling repository](https://github.com/naziajassim/hgf_srt) for details of the HGF modeling and custom Julia scripts._
 
 The workflow includes:
 
